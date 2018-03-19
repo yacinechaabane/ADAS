@@ -158,7 +158,7 @@ mqttClient.on('connect', (connack) => {
     /*topic */
     mqttClient.subscribe('mainRoutine/+', { qos: 2 });
     mqttClient.subscribe('carPosition/+', { qos: 2 });
-    mqttClient.subscribe(' specificResponse/+', { qos: 2 });
+    mqttClient.subscribe('specificResponse/+', { qos: 2 });
 
 
   }
@@ -178,6 +178,7 @@ mqttClient.on('message', (topic, message) => {
     io.emit(topic, message);
   }
   else {
+    console.log("alors  ",topic)
     io.emit(topic, message);
   }
 
@@ -263,7 +264,7 @@ app.post('/', function (req, res) {
 
 });
 
-app.get("/register",function(req,res){
+app.get("/register", function (req, res) {
   if (req.session.username === undefined) {
 
     res.render('page/register');
@@ -271,8 +272,8 @@ app.get("/register",function(req,res){
   }
   else {
 
-    
-    
+
+
     res.redirect('page/home');
   }
 
@@ -280,6 +281,9 @@ app.get("/register",function(req,res){
 
 
 });
+
+
+
 app.get('/home', function (req, res) {
   if (req.session.username === undefined) {
 
