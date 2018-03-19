@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session')
 var flash = require('express-flash');
+var emailExistence= require('email-existence')
 
 var server = app.listen(8081, function () {
   var host = server.address().address
@@ -217,7 +218,7 @@ app.get('/', function (req, res) {
   //res.send('Hello World');
   if (req.session.username === undefined) {
     //console.log("usernam  ",req.session.username)
-    res.render("page/login");
+    res.render("page/login",{ echec : req.flash('echec') , email:req.flash('email') });
 
   }
   else {
@@ -252,12 +253,14 @@ app.post('/', function (req, res) {
         }
         else {
           console.log("wrong password")
+          req.flash("email","Email");
         }
       })
 
     } else {
 
       console.log("wrong username")
+      req.flash("echec",'User')
     }
   });
 
@@ -267,12 +270,12 @@ app.post('/', function (req, res) {
 app.get("/register", function (req, res) {
   if (req.session.username === undefined) {
 
-    res.render('page/register');
+    res.render('page/register',{ echec : req.flash('echec') , email:req.flash('email') });
 
   }
   else {
 
-
+ 
 
     res.redirect('page/home');
   }
@@ -282,6 +285,55 @@ app.get("/register", function (req, res) {
 
 });
 
+app.post("/register",function(req,res){
+console.log(req.body)
+
+UserModel.find({ userName: req.body.userName }, function (err, docs) {
+  if (docs.length) {
+    console.log('User Name exists you better choose another one');
+    req.flash("echec",'User')
+    res.redirect("/register");
+
+  } else {
+    /* check if mail exists */
+
+    emailExistence.check(req.body.email, function(error, response){
+      console.log('res: '+response);
+      if(response)
+      {
+        console.log("lets register")
+        UserModel.create({userName:req.body.userName,firstName:req.body.firstName,lastName:req.body.lastName,password:req.body.password,email:req.body.email});
+          req.session.username = req.body.pass;
+          req.session.pass = req.body.pass;
+          console.log("session    :  ", req.session);
+          //res.render("page/home");
+          res.redirect("/home");
+
+      }
+      else 
+      {
+        req.flash("email","Email");
+        res.redirect("/register");
+      }
+  });
+   
+     
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+})
 
 
 app.get('/home', function (req, res) {

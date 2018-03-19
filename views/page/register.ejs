@@ -28,7 +28,21 @@
 <!--===============================================================================================-->
 </head>
 <body>
+	<div>
+	   <% if (echec=="User") {  %>
+		<div class='isa_error'><b><center><i class="fa fa-times-circle"></i>
+	   <%= "user name exits" %> </center></b></div>
+   
+	   <% } %>
+	</div>
+	<div>
 	
+	   <% if (email=="Email") {  %>
+		<div class='isa_error'><b><center><i class="fa fa-times-circle"></i>
+	   <%= "Wrong Email " %> </center></b></div>
+   
+	   <% } %>
+	</div>
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
